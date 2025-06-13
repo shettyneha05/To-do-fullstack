@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Notion's To do</title>
+  <link href="./output.css" rel="stylesheet" />
+</head>
+<body class="bg-white text-black">
+  <!-- Header -->
+  <div class="relative bg-yellow-300 p-14 sm:p-5 flex items-center m-5">
+    <h1 class="text-8xl sm:text-6xl md:text-9xl font-bold mx-auto text-center text-black">My List</h1>
+    <a
+      id="logoutBtn"
+      class="absolute right-8 top-4 sm:top-1/2 transform sm:-translate-y-1/2 px-6 py-2 bg-black text-white rounded-lg shadow hover:bg-[#4e6190] transition font-semibold text-xs sm:text-sm hover:cursor-pointer"
+    >
+      logout
+    </a>
+  </div>
+
+  <!-- Main content -->
+   <div class="bg-black w-full min-h-screen pb-10 ">
+  <div class="max-w-4xl mx-auto px-4 py-8 m-5 w-full">
+    <!-- Form -->
+    <form id="todoForm" class="flex sm:flex-row items-center justify-center gap-4 mb-6 sm:text-5xl ">
+      <input
+        type="text"
+        id="todoInput"
+        placeholder="Add the task here"
+        class="text-6xl sm:w-auto text-white text-center bg-transparent border-b-4 outline-none border-yellow-300 placeholder-gray-400 py-2 m-4"
+      />
+      <input 
+        type="date"
+        id="dueDate"
+        class=" text-black m-2 border border-gray-500 bg-yellow-300 text-sm"
+      />
+
+      <button
+        type="submit"
+        class="text-6xl px-5 text-white hover:text-yellow-300 p-3 hover:cursor-pointer transition duration-150 transform active:scale-110">
+        add
+      </button>
+    </form>
+        
+
+   
+     <button onclick="clearTasks()" class="px-3 bg-red-500 text-white rounded hover:bg-red-700 transition">
+         Clear All Tasks
+     </button>
+        <div class="flex justify-center item-center mb-4">
+        <ol id="list" class="font-semibold list-decimal list-outside text-3xl text-white mt-13 space-y-4 sm:text-3xl max-w-2xl">
+               
+         </ol>
+        </div>
+
+  </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

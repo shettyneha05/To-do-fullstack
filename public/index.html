@@ -1,0 +1,250 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="./output.css" rel="stylesheet">
+  <title>NotionL - To-Do App</title>
+  <style>
+    .overlay {
+      position: fixed;
+      top: 0; left: 0; bottom:0; right:0;
+      background: rgba(0,0,0,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .auth-card {
+      background: black;
+      padding: 32px 24px;
+      border-radius: 18px;
+      box-shadow: 0 4px 32px rgba(0,0,0,0.15);
+      min-width: 320px;
+      max-width: 90vw;
+      position: relative;
+      color: white;
+    }
+    .close-btn {
+      position: absolute;
+      top: 12px; right: 16px;
+      border: none;
+      font-size: 1.5rem;
+      color: #888;
+      cursor: pointer;
+    }
+    .auth-card h2 {
+      margin-top: 0;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+    .auth-card input {
+      width: 100%;
+      margin-bottom: 16px;
+      padding: 10px 12px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+    .auth-card button[type="submit"] {
+      width: 100%;
+      padding: 12px;
+      background: #5a67d8;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      margin-top: 8px;
+      cursor: pointer;
+    }
+    .auth-card button[type="submit"]:hover {
+      background: #434190;
+    }
+  </style>
+</head>
+<body class="flex flex-col min-h-screen">
+  <!-- Header -->
+  <div class="flex justify-center items-center bg-black py-8">
+    <h1 class=" text-white font-bold text-6xl">NotionL</h1>
+  </div>
+
+  <!-- Main Landing Section -->
+  <div class="bg-yellow-300 flex-1 flex items-center justify-center">
+    <div class="flex flex-col items-center justify-center">
+      <h1 id="typewriter" class="font-bold text-8xl mb-8 typewriter-cursor text-black font-mono"></h1>
+      <button
+        id="startAuthBtn"
+        class="px-8 py-4 border-4 bg-black text-yellow-300 items-center justify-center text-2xl rounded-lg shadow hover:bg-yellow-300 hover:text-black transition font-semibold cursor-pointer">
+        Click here
+      </button>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="flex justify-center items-center bg-black py-8">
+    <h1 class="text-white font-bold text-2xl">copyrights reserved @nBuilders</h1>
+  </div>
+
+  <!-- Auth Modal Overlay -->
+  <div id="authOverlay" class="overlay" style="display:none;">
+    <div id="authCard" class="auth-card"></div>
+  </div>
+
+  <!-- Typewriter Effect Script -->
+  <script>
+    const text="My personal To-do site!";
+    const typewriter=document.getElementById("typewriter");
+    let i=0;
+    function typeWriter(){
+        if (i<text.length){
+            typewriter.textContent += text.charAt(i);
+            i++;
+            setTimeout(typeWriter,150);
+        }
+    }
+    typeWriter();
+  </script>
+
+  <!-- Auth Modal Logic Script -->
+  <script>
+    if (localStorage.getItem('token')) {
+      window.location.href = 'next1.html';
+    }
+
+    const startAuthBtn = document.getElementById('startAuthBtn');
+    const overlay = document.getElementById('authOverlay');
+    const card = document.getElementById('authCard');
+
+    // Auth form templates
+    const signInForm=`
+      <button class="close-btn" onclick="closeAuthCard()">&times;</button>
+      <h2>Sign In </h2>
+      <form id="signInForm">
+        <input type="text" id="loginUsername" placeholder="Username" required>
+        <input type="password" id="loginPassword" placeholder="Password" required>
+        <button type="submit">Sign In </button>
+        <p style="text-align:center; margin-top:10px;">Don't have an account? <a href="#" id="switchToSignUp">Sign Up</a></p>
+      </form>
+      `;
+
+    const signUpForm=`
+    <button class="close-btn" onclick="closeAuthCard()">&times;</button>
+    <h2>Sign Up</h2>
+    <form id="signUpForm">
+      <input type="text" id="signupUsername" placeholder="Username" required>
+      <input type="password" id="signupPassword" placeholder="Password" required>
+      <button type="submit">Sign Up </button>
+      <p style="text-align:center; margin-top:10px;">Already have an account? <a href="#" id="switchToSignIn">Sign In</a></p>
+      </form>
+    `;
+
+    // Show auth card when "Click Here" is pressed
+
+    startAuthBtn.onclick=()=>{
+      card.innerHTML=signInForm;
+      overlay.style.display='flex';
+      attachAuthFormListeners();
+    }
+
+    //close auth card when pressed on X
+    function closeAuthCard() {
+      overlay.style.display = 'none';
+    }
+
+    // Hide card when clicking outside it
+    overlay.onclick =(e) =>{
+      if(e.target === overlay){
+        closeAuthCard();
+      }
+    };
+
+
+    // Attach listeners to forms and switch links
+    function attachAuthFormListeners() {
+      // Switch to Sign Up
+      const switchToSignUp = document.getElementById('switchToSignUp');
+      if (switchToSignUp) {
+        switchToSignUp.onclick = (e) => {
+          e.preventDefault();
+          card.innerHTML = signUpForm;
+          attachAuthFormListeners();
+        };
+      }
+
+      // Switch to Sign In
+      const switchToSignIn = document.getElementById('switchToSignIn');
+      if (switchToSignIn) {
+        switchToSignIn.onclick = (e) => {
+          e.preventDefault();
+          card.innerHTML = signInForm;
+          attachAuthFormListeners();
+        };
+      }
+      // Handle Sign In
+      const signInFormElem = document.getElementById('signInForm');
+      if (signInFormElem) {
+        signInFormElem.onsubmit = async (e) => {
+          e.preventDefault();
+          const username = document.getElementById('loginUsername').value;
+          const password = document.getElementById('loginPassword').value;
+          try {
+            const res = await fetch('/api/auth/login', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ username, password })
+            });
+            const data = await res.json();
+            if (res.ok) {
+              localStorage.setItem('token', data.token);
+              // Redirect to your to-do page
+              window.location.href = 'next1.html';
+            } else {
+              alert(data.error || 'Login failed');
+            }
+          } catch (err) {
+            alert('Network error');
+          }
+        };
+      }
+      // Handle Sign Up
+      const signUpFormElem = document.getElementById('signUpForm');
+      if (signUpFormElem) {
+        signUpFormElem.onsubmit = async (e) => {
+          e.preventDefault();
+          const username = document.getElementById('signupUsername').value;
+          const password = document.getElementById('signupPassword').value;
+          try {
+            const res = await fetch('/api/auth/signup', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ username, password })
+            });
+            const data = await res.json();
+            if (res.ok) {
+              alert('Signup successful! Please login.');
+              card.innerHTML = signInForm;
+              attachAuthFormListeners();
+            } else {
+              alert(data.error || 'Signup failed');
+            }
+          } catch (err) {
+            alert('Network error');
+          }
+        };
+      }
+    }
+  </script>
+</body>
+</html>
+
+
+
+ 
+
+
+
+
+
+
+
+
